@@ -1,0 +1,14 @@
+name: GuideBook
+main: com.tenth.guidebook.GuideBook
+version: 1.0
+commands:
+  helpBook:
+    description: Gives the player the Guide Book.
+    usage: /helpbook
+  giveHelpBook:
+    description: Gives another player the Guide Book.
+    usage: /giveHelpBook <playerName>
+    permission: helpBook.giveOthers
+permissions:
+  helpBook.giveOthers:
+    default: op
