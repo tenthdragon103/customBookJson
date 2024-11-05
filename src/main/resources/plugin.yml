@@ -1,14 +1,17 @@
-name: GuideBook
-main: com.tenth.guidebook.GuideBook
+name: CustomBook
+main: com.tenth.custombook.BookCommandExec
 version: 1.0
 commands:
-  helpBook:
-    description: Gives the player the Guide Book.
-    usage: /helpbook
-  giveHelpBook:
-    description: Gives another player the Guide Book.
-    usage: /giveHelpBook <playerName>
-    permission: helpBook.giveOthers
+  customBook:
+    description: Give sender the book.
+    usage: /customBook <book>
+    permission: customBook.giveSelf
+  giveCustomBook:
+    description: Gives another player the book.
+    usage: /giveCustomBook <playerName> <book>
+    permission: customBook.giveOthers
 permissions:
-  helpBook.giveOthers:
+  customBook.giveOthers:
     default: op
+  customBook.giveSelf:
+    default: not op
