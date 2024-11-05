@@ -10,8 +10,9 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.ToDoubleBiFunction;
 
 import org.bukkit.Material;
 
@@ -43,10 +44,11 @@ public class BookWriter {
             try (FileReader reader = new FileReader(jsonFile)) {
                 JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 
+
                 String title = jsonObject.get("title").getAsString();
                 String author = jsonObject.get("author").getAsString();
                 List<String> lore = gson.fromJson(jsonObject.get("lore"), new TypeToken<List<String>>() {}.getType());
-                String[] pages = gson.fromJson(jsonObject.get("pages"), String[].class);
+                List<String> pages = parsePages();
 
                 // TODO: 11/4/2024 make the method able to parse click events and hover events from the json
 
@@ -64,5 +66,13 @@ public class BookWriter {
             e.printStackTrace();
         }
         return book;
+    }
+
+    public List<String> parsePages() {
+        List<String> pages = new ArrayList<>();
+
+
+
+        return pages;
     }
 }

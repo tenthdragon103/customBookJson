@@ -1,1 +1,1 @@
-org.bukkit.Material is being replaced but its not replaced yet so its not there but theres nothing else to use? so im just ignoring errors about it
+Plugin to convert JSON files to minecraft books. Fully customizable via JSON datafiles. You need to know JSON to write books, but its easy to learn and the example book shows all possibilites and features.
