@@ -1,19 +1,46 @@
 package com.tenth.custombook;
 
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.ChatColor;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public final class BookCommandExec extends JavaPlugin {
+    private BookWriter bookWriter;
 
     @Override
     public void onEnable() {
+        this.bookWriter = new BookWriter(this);
         this.getCommand("customBook").setExecutor(this);
         this.getCommand("giveCustomBook").setExecutor(this);
         getLogger().info(ChatColor.GREEN + "Custom Book enabled");
+
+        if (!getDataFolder().exists()) { // if datafolder doesnt exist create one
+            getDataFolder().mkdirs();
+        }
+
+        File jsonFile = new File(getDataFolder(), "examplebook.json");
+
+        if (!jsonFile.exists()) {
+            try (InputStream in = getResource("examplebook.json")) { // default file inside jar
+                if (in != null) {
+                    Files.copy(in, jsonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    getLogger().info("Default examplebook.json created.");
+                } else {
+                    getLogger().warning("Default examplebook.json not found.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -23,39 +50,48 @@ public final class BookCommandExec extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("customBook")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                String book = args[0];
-                if (getResource(book) == null) {
-                    player.sendMessage(ChatColor.RED + "[ERROR CustomBook] The book \"" + book + "\" does not exist or is improperly formatted.");
-                } else {
-                    BookWriter writer = new BookWriter();
-                    writer.sendBook(book + ".json", player);
-                }
-            } else {
-                getLogger().warning("This command can only be ran by a player!");
-            }
-        } else if (command.getName().equalsIgnoreCase("giveCustomBook")) { //giveCustomBook <playerName> <book>
-            if (args.length == 2) {
-                if (Bukkit.getPlayer(args[0]) != null) { // check if valid player otherwise complain abt it
-                    Player player = Bukkit.getPlayer(args[0]);
-                    String book = args[1];
-                    if (getResource(book) == null) {
-                        sender.sendMessage(ChatColor.RED + "[ERROR CustomBook] The book \"" + book + "\" does not exist or is improperly formatted.");
+        if (command.getName().equalsIgnoreCase("customBook")) { // customBook <book>
+            if (args.length == 1) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    String book = args[0];
+                    File bookFile = new File(getDataFolder(), book + ".json");
+                    if (!bookFile.exists()) {
+                        player.sendMessage(ChatColor.RED + "[CustomBook] ERROR: The book \"" + book + "\" does not exist or is improperly formatted.");
+                        return true;
                     } else {
-                        BookWriter writer = new BookWriter();
-                        writer.sendBook(book + ".json", player); //player is never null. ignore warning
+                        bookWriter.sendBook(bookFile.getName(), player);
+                        return true;
                     }
                 } else {
-                    sender.sendMessage(ChatColor.RED + "[ERROR CustomBook] Invalid player name \"" + args[0] + "\".");
+                    getLogger().warning("This command can only be run by a player!");
+                    return true;
                 }
             } else {
-                sender.sendMessage(ChatColor.RED + "[ERROR CustomBook] Expected two arguments <playerName> <book>. Received " + args.length + " arguments.");
+                sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: Expected one argument <book>. Received " + args.length + " arguments.");
+                return true;
+            }
+        } else if (command.getName().equalsIgnoreCase("giveCustomBook")) { // giveCustomBook <playerName> <book>
+            if (args.length == 2) {
+                Player targetPlayer = Bukkit.getPlayer(args[0]);
+                if (targetPlayer == null) {
+                    sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: Invalid player name \"" + args[0] + "\".");
+                    return true;
+                }
+                String book = args[1];
+                File bookFile = new File(getDataFolder(), book + ".json");
+                if (!bookFile.exists()) {
+                    sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: The book \"" + book + "\" does not exist or is improperly formatted.");
+                    return true;
+                } else {
+                    bookWriter.sendBook(bookFile.getName(), targetPlayer);
+                    return true;
+                }
+            } else {
+                sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: Expected two arguments <playerName> <book>. Received " + args.length + " arguments.");
+                return true;
             }
         }
         return false;
     }
-
-
 }
