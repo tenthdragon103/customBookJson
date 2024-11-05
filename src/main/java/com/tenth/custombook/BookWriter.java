@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.bukkit.Material;
 
 public class BookWriter extends JavaPlugin {
     public void sendBook(String jsonFile, Player player) {
@@ -26,7 +27,7 @@ public class BookWriter extends JavaPlugin {
             Gson gson = new Gson();
             if (getResource(JsonFile) == null) {
                 getLogger().warning(ChatColor.RED + "[GuideBook] ERROR: " + JsonFile + " is null");
-                return Material.WRITTEN_BOOK;
+                return null;
             }
             InputStreamReader reader = new InputStreamReader(getResource(JsonFile)); //never null. ignore warning.
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
