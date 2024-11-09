@@ -14,11 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public final class BookCommandExec extends JavaPlugin {
-    private BookWriter bookWriter;
+    private BookParser bookParser;
 
     @Override
     public void onEnable() {
-        this.bookWriter = new BookWriter(this);
+        this.bookParser = new BookParser(this);
         this.getCommand("customBook").setExecutor(this);
         this.getCommand("giveCustomBook").setExecutor(this);
         getLogger().info(ChatColor.GREEN + "Custom Book enabled");
@@ -60,7 +60,7 @@ public final class BookCommandExec extends JavaPlugin {
                         player.sendMessage(ChatColor.RED + "[CustomBook] ERROR: The book \"" + book + "\" does not exist or is improperly formatted.");
                         return true;
                     } else {
-                        bookWriter.sendBook(bookFile.getName(), player);
+                        bookParser.sendBook(bookFile.getName(), player);
                         return true;
                     }
                 } else {
@@ -84,7 +84,7 @@ public final class BookCommandExec extends JavaPlugin {
                     sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: The book \"" + book + "\" does not exist or is improperly formatted.");
                     return true;
                 } else {
-                    bookWriter.sendBook(bookFile.getName(), targetPlayer);
+                    bookParser.sendBook(bookFile.getName(), targetPlayer);
                     return true;
                 }
             } else {
