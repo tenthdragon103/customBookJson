@@ -82,11 +82,10 @@ public final class BookCommandExec extends JavaPlugin {
                 File bookFile = new File(getDataFolder(), book + ".json");
                 if (!bookFile.exists()) {
                     sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: The book \"" + book + "\" does not exist or is improperly formatted.");
-                    return true;
                 } else {
                     bookParser.sendBook(bookFile.getName(), targetPlayer);
-                    return true;
                 }
+                return true;
             } else {
                 sender.sendMessage(ChatColor.RED + "[CustomBook] ERROR: Expected two arguments <playerName> <book>. Received " + args.length + " arguments.");
                 return true;
