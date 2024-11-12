@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.tenth.custombook.BookDatatypes.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
@@ -68,6 +69,9 @@ public class BookParser {
                         }
                         pageContents.add(pageContent.toString()); // add whole page content
                     }
+
+                    bookMeta.setFireResistant(true);
+                    bookMeta.setRarity(ItemRarity.EPIC);
 
                     bookMeta.setPages(pageContents); // set the pages to meta
                     plugin.getLogger().info(bookMeta.getAsString());
