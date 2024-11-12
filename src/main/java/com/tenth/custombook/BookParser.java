@@ -58,8 +58,19 @@ public class BookParser {
                 if (bookMeta != null) {
                     bookMeta.setTitle(bookData.title);
                     bookMeta.setAuthor(bookData.author);
-                    bookMeta.setPages(bookData.pagesToStringList());
                     bookMeta.setLore(bookData.lore);
+
+                    List<String> pageContents = new ArrayList<>();
+                    for (Page page : bookData.pages) { // iterate through each Page instance
+                        StringBuilder pageContent = new StringBuilder();
+                        for (TextComponent component : page.components) { // iterate through each component
+                            pageContent.append(component.text); // add text to page
+                        }
+                        pageContents.add(pageContent.toString()); // add whole page content
+                    }
+
+                    bookMeta.setPages(pageContents); // set the pages to meta
+                    plugin.getLogger().info(bookMeta.getAsString());
                     book.setItemMeta(bookMeta);
                 }
             }
@@ -78,6 +89,12 @@ public class BookParser {
 
         // Process each JSON page into a Page object
         for (JsonElement pageElement : jsonPages) {
+
+            if (!pageElement.isJsonArray()) {
+                plugin.getLogger().warning("Expected JsonArray for page, but found: " + pageElement);
+                continue;
+            }
+
             Page page = new Page();
             page.components = new ArrayList<>(); // Initialize components list
 
