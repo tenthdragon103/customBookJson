@@ -20,20 +20,28 @@ public class Book {
                 pageContent.append("{");
 
                 // Add text
-                pageContent.append("\"text\":\"").append(component.text).append("\"");
+                if (component.text != null) {
+                    pageContent.append("\"text\":\"").append(escapeJson(component.text)).append("\"");
+                }
 
                 // Add hover event if present
                 if (component.hoverEvent != null) {
                     pageContent.append(",\"hoverEvent\":{");
                     pageContent.append("\"action\":\"").append(component.hoverEvent.action).append("\",");
-                    pageContent.append("\"contents\":[");
-                    for (int j = 0; j < component.hoverEvent.contents.size(); j++) {
-                        pageContent.append("\"").append(component.hoverEvent.contents.get(j)).append("\"");
-                        if (j < component.hoverEvent.contents.size() - 1) {
-                            pageContent.append(",");
+                    if (component.hoverEvent.contents != null  && !component.hoverEvent.contents.isEmpty()) {
+                        pageContent.append("\"contents\":[");
+                        for (int j = 0; j < component.hoverEvent.contents.size(); j++) {
+                            pageContent.append("\"").append(component.hoverEvent.contents.get(j)).append("\"");
+                            if (j < component.hoverEvent.contents.size() - 1) { // check if its not the last object
+                                pageContent.append(",");
+                            }
                         }
+                        pageContent.append("]");
+                    } else {
+                        pageContent.append("\"contents\":[]"); // put empty array to avoid malformed json
                     }
-                    pageContent.append("]}");
+
+                    pageContent.append("}");
                 }
 
                 // Add click event if present
@@ -46,8 +54,7 @@ public class Book {
 
                 pageContent.append("}");
 
-                // If this isn't the last component, add a comma
-                if (i < page.components.size() - 1) {
+                if (i < page.components.size() - 1) { // check if its not the last object
                     pageContent.append(",");
                 }
             }
@@ -57,5 +64,10 @@ public class Book {
         }
 
         return pageStrings;
+    }
+
+    private String escapeJson(String input) { // voodoo shit (aka chatgpt written and i didnt bother to read it)
+        if (input == null) return "";
+        return input.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
